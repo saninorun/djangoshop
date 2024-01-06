@@ -32,7 +32,9 @@ def registration(request: WSGIRequest) -> HttpResponseRedirect | HttpResponse:
         form = UserRegistrationForm(data=request.POST)
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect(reverse('user:login'))
+            user = form.instance
+            auth.login(request, user)
+            return HttpResponseRedirect(reverse('main:index'))
     else:
         form = UserRegistrationForm()
 
@@ -51,4 +53,5 @@ def profile(request):
 
 
 def logout(request):
-    ...
+    auth.logout(request)
+    return HttpResponseRedirect(reverse('main:index'))
