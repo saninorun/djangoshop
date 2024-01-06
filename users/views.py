@@ -1,10 +1,11 @@
-from django.contrib import auth
+from django.contrib import auth, messages
+from django.contrib.auth.decorators import login_required
 from django.core.handlers.wsgi import WSGIRequest
 from django.http import HttpResponseRedirect, HttpResponse, HttpRequest
 from django.shortcuts import render
 from django.urls import reverse
 
-from users.forms import UserLoginForm, UserRegistrationForm
+from users.forms import UserLoginForm, UserRegistrationForm, ProfileForm
 
 
 def login(request:WSGIRequest) -> HttpResponseRedirect | HttpResponse:
@@ -16,6 +17,9 @@ def login(request:WSGIRequest) -> HttpResponseRedirect | HttpResponse:
             user = auth.authenticate(username=username, password=password)
             if user:
                 auth.login(request, user)
+                messages.success(request=request,
+                                 message=f'{username} logged in successfully!'
+                                 )
                 return HttpResponseRedirect(reverse('main:index'))
     else:
         form = UserLoginForm()
@@ -34,6 +38,9 @@ def registration(request: WSGIRequest) -> HttpResponseRedirect | HttpResponse:
             form.save()
             user = form.instance
             auth.login(request, user)
+            messages.success(request=request,
+                             message=f'{user.username} registred and logged in successfully!'
+                             )
             return HttpResponseRedirect(reverse('main:index'))
     else:
         form = UserRegistrationForm()
@@ -45,13 +52,27 @@ def registration(request: WSGIRequest) -> HttpResponseRedirect | HttpResponse:
     return render(request, 'users/registration.html', context)
 
 
-def profile(request):
+@login_required
+def profile(request: WSGIRequest) -> HttpResponseRedirect | HttpResponse:
+    if request.method == 'POST':
+        form = ProfileForm(data=request.POST, instance=request.user, files=request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request=request,
+                             message=f'{form.username} update successfully!'
+                             )
+            return HttpResponseRedirect(reverse('users:profile'))
+    else:
+        form = ProfileForm(instance=request.user)
+
     context = {
-        'title': 'Home - Кабинет'
+        'title': 'Home - Кабинет',
+        'form': form,
     }
     return render(request, 'users/profile.html', context)
 
 
-def logout(request):
+@login_required()
+def logout(request: WSGIRequest) -> HttpResponseRedirect | HttpResponse:
     auth.logout(request)
     return HttpResponseRedirect(reverse('main:index'))
