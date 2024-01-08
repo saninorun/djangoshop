@@ -10,10 +10,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static "deps/css/bootstrap/bootstrap.min.css" %}">
     <link rel="stylesheet" href="{% static "deps/css/my_css.css" %}">
+
     <!-- Стиль footer-a для главной страницы -->
     {% block css %}
-
     {% endblock %}
+
     <!-- Favicons for different platforms -->
     <link rel="apple-touch-icon" sizes="180x180" href="{% static "deps/favicon/apple-touch-icon.png" %}">
     <link rel="icon" type="image/png" sizes="32x32" href="{% static "deps/favicon/favicon-32x32.png" %}">
@@ -46,7 +47,7 @@
                             </ul>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link  text-white" href="carts/cart.html">Корзина</a>
+                            <a class="nav-link  text-white" href="{% url 'user:users_cart' %}">Корзина</a>
                         </li>
                         {% if not user.is_authenticated %}
                         <li class="nav-item">
@@ -102,77 +103,9 @@
                     </ul>
                 </div>
                 <!-- Значек корзины, вызывает модальное окно -->
-                <div>
-                    <button type="button" class="btn btn-dark btn-secondary d-flex" id="modalButton"
-                        aria-expanded="false">
-                        <img class="mx-1" src="{% static "deps/icons/basket2-fill.svg" %}" alt="Catalog Icon" width="24"
-                            height="24">
-                        <span id="goods-in-cart-count">0</span>
-                    </button>
-                </div>
-                <!-- Разметка модального окна корзины -->
-                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-                    aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-scrollable">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <h3 class="text-center mb-4">Корзина</h3>
-                                <div class="container" id="cart-items-container">
-                                    <!-- Разметка корзины -->
-                                    <div class="card mb-3 text-bg-light shadow-lg">
-                                        <div class="card-header">
-                                            <h5 class="card-title">Товар</h5>
-                                        </div>
-                                        <ul class="list-group list-group-flush">
-                                            <li class="list-group-item">
-                                                <div class="row text-center">
-                                                    <div class="col p-0">
-                                                        <div class="input-group">
-                                                            <span class="input-group-btn">
-                                                                <button type="button" class="btn btn-dark btn-sm decrement"
-                                                                    data-cart-id="" data-cart-change-url="">-</button>
-                                                            </span>
-                                                            <input type="text" class="form-control number" value="1"
-                                                                readonly>
-                                                            <span class="input-group-btn">
-                                                                <button type="button" class="btn btn-dark btn-sm increment"
-                                                                    data-cart-id="" data-cart-change-url="">+</button>
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col p-0">
-                                                        <p>x 100.00 = </p>
-                                                    </div>
-                                                    <div class="col p-0"><strong>100.00 $</strong></div>
-                                                    <div class="col p-0">
-                                                        <a href="#" class="remove-from-cart" data-cart-id="">
-                                                            <img class="mx-1" src="{% static "deps/icons/trash3-fill.svg" %}"
-                                                                alt="Catalog Icon" width="16" height="16">
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <div class="card mb-3 shadow-lg">
-                                        <div class="card-footer">
-                                            <p class="float-left">Итого <strong>1</strong> товар(а) на сумму</p>
-                                            <h4 class="float-left"><strong>100.00 $</strong></h4>
-                                        </div>
-                                    </div>
-                                    <!-- Закончилась разметка корзины -->
-                                </div>
-                                <a class="btn btn-dark" href="orders/create_order.html">
-                                    Оформить заказ
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                    {% block modal_cart %}
+                    	
+                    {% endblock %}
                 <!-- Закончилась разметка модального окна -->
             </div>
         </div>
@@ -194,7 +127,6 @@
     {% block footer %}{% endblock %}
 
     <script src="{% static "deps/js/jquery/jquery-3.7.0.min.js" %}"></script>
-    <script src="{% static "deps/js/jquery-events.js" %}"></script>
     <script src="{% static "deps/js/jquery-ajax.js" %}"></script>
     <script src="{% static "deps/js/bootstrap/bootstrap.bundle.min.js" %}"></script>
 </body>

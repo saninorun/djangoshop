@@ -44,9 +44,10 @@ INSTALLED_APPS = [
 
     "debug_toolbar",
 
-    'main',
-    'goods',
-    'users',
+    'main.apps.MainConfig',
+    'goods.apps.GoodsConfig',
+    'users.apps.UsersConfig',
+    'carts.apps.CartsConfig',
 ]
 
 MIDDLEWARE = [
@@ -153,3 +154,4 @@ INTERNAL_IPS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'users.User'
+LOGIN_URL = '/user/login/'

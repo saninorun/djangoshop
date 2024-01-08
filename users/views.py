@@ -8,7 +8,7 @@ from django.urls import reverse
 from users.forms import UserLoginForm, UserRegistrationForm, ProfileForm
 
 
-def login(request:WSGIRequest) -> HttpResponseRedirect | HttpResponse:
+def login(request: WSGIRequest) -> HttpResponseRedirect | HttpResponse:
     if request.method == 'POST':
         form = UserLoginForm(data=request.POST)
         if form.is_valid():
@@ -20,6 +20,10 @@ def login(request:WSGIRequest) -> HttpResponseRedirect | HttpResponse:
                 messages.success(request=request,
                                  message=f'{username} logged in successfully!'
                                  )
+                redirect_page = request.POST.get('next', None)
+                if redirect_page and redirect_page != reverse('users:logout'):
+                    return HttpResponseRedirect(request.POST.get('next'))
+
                 return HttpResponseRedirect(reverse('main:index'))
     else:
         form = UserLoginForm()
@@ -70,6 +74,10 @@ def profile(request: WSGIRequest) -> HttpResponseRedirect | HttpResponse:
         'form': form,
     }
     return render(request, 'users/profile.html', context)
+
+# @login_required()
+def users_cart(request: WSGIRequest) -> HttpResponseRedirect | HttpResponse:
+    return render(request, 'users/users_cart.html')
 
 
 @login_required()
