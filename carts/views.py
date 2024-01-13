@@ -39,11 +39,51 @@ def cart_add(request: WSGIRequest) -> HttpResponseRedirect | HttpResponse:
     return JsonResponse(response_data)
 
 
-def cart_change(request: WSGIRequest, product_slug) -> HttpResponseRedirect | HttpResponse:
-    pass
+def cart_change(request: WSGIRequest) -> HttpResponseRedirect | HttpResponse:
+
+    card_id = request.POST.get('cart_id', None)
+    quantity = request.POST.get('quantity', None)
+
+    cart = Cart.objects.get(id=card_id)
+    cart.quantity = quantity
+    cart.save()
+    updated_quantity = cart.quantity
+
+    cart = get_user_carts(request=request)
+    cart_items_html = render_to_string(
+        template_name='carts/includes/included_cart.html',
+        context={'carts': cart},
+        request=request,
+    )
+
+    response_data = {
+        'message': 'Колличество изменено',
+        'cart_items_html': cart_items_html,
+        'quantity': updated_quantity,
+    }
+
+    return JsonResponse(response_data)
 
 
-def cart_remove(request: WSGIRequest, cart_id) -> HttpResponseRedirect | HttpResponse:
+def cart_remove(request: WSGIRequest) -> HttpResponseRedirect | HttpResponse:
+    cart_id = request.POST.get('cart_id', None)
     cart = Cart.objects.get(pk=cart_id)
+    quantity = cart.quantity
     cart.delete()
-    return redirect(request.META['HTTP_REFERER'])
+
+    user_cart = get_user_carts(request=request)
+    cart_items_html = render_to_string(
+        template_name='carts/includes/included_cart.html',
+        context={
+            'carts': user_cart,
+        },
+        request=request
+    )
+
+    response_data = {
+        'message': 'Товар удален из корзины',
+        'cart_items_html': cart_items_html,
+        'quantity_deleted': quantity,
+    }
+
+    return JsonResponse(response_data)
