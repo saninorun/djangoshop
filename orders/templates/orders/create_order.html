@@ -51,7 +51,8 @@
                                 placeholder="В формате: XXX-XXX-XX-XX"
                                 required>
                             {% if form.phone_number.errors %}
-                                <div class="alert alert-danger alert-dismissible fade shadow">
+                                <div class="alert alert-danger alert-dismissible shadow">
+{#                                <div class="alert alert-danger alert-dismissible fade shadow">#}
                                     {{ form.phone_number.errors }}
                                 </div>
                             {% endif %}

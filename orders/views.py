@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.core.handlers.wsgi import WSGIRequest
 from django.db import transaction
 from django.http import HttpResponseRedirect, HttpResponse
@@ -10,6 +11,7 @@ from orders.forms import CreateOrderForm
 from orders.models import Order, OrderItem
 
 
+@login_required
 def create_order(request: WSGIRequest) -> HttpResponseRedirect | HttpResponse:
     if request.method == "POST":
         form = CreateOrderForm(data=request.POST)
@@ -63,6 +65,7 @@ def create_order(request: WSGIRequest) -> HttpResponseRedirect | HttpResponse:
     context = {
         'title': 'Home - Оформление заказа',
         'form': form,
+        'order': True
     }
     return render(request, 'orders/create_order.html', context=context)
 
