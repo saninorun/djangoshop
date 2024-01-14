@@ -74,7 +74,7 @@
                         </li>
                         {% endif %}
                     </ul>
-                    <form class="d-flex" role="search" action="{% url "catalog:search" %}" method="get">
+                    <form class="d-flex" role="search" action="{% url "goods:search" %}" method="get">
                         <input class="form-control me-2" type="search" name="q" placeholder="Search" aria-label="Search">
                         <button class="btn btn-outline-success text-white" type="submit">Поиск</button>
                     </form>
@@ -97,7 +97,7 @@
                     <ul class="dropdown-menu bg-dark" data-bs-theme="dark">
                         {% tag_categories as categories %}
                         {% for category in categories %}
-                            <li><a class="dropdown-item text-white" href="{% url "catalog:index" category.slug %}">{{category.name}}</a></li>
+                            <li><a class="dropdown-item text-white" href="{% url "goods:index" category.slug %}">{{category.name}}</a></li>
                         {% endfor %}
 
                     </ul>

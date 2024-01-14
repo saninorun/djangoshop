@@ -21,6 +21,22 @@ def cart_add(request: WSGIRequest) -> HttpResponseRedirect | HttpResponse:
                 cart.save()
         else:
             Cart.objects.create(user=request.user, product=product, quantity=1)
+    else:
+        carts = Cart.objects.filter(
+            session_key=request.session.session_key,
+            product=product,
+        )
+        if carts.exists():
+            cart = carts.first()
+            if cart:
+                cart.quantity += 1
+                cart.save()
+        else:
+            Cart.objects.create(
+                session_key=request.session.session_key,
+                product=product,
+                quantity=1,
+            )
 
     user_cart = get_user_carts(request)
     cart_items_html = render_to_string(
@@ -47,7 +63,6 @@ def cart_change(request: WSGIRequest) -> HttpResponseRedirect | HttpResponse:
     cart = Cart.objects.get(id=card_id)
     cart.quantity = quantity
     cart.save()
-    updated_quantity = cart.quantity
 
     cart = get_user_carts(request=request)
     cart_items_html = render_to_string(
@@ -59,7 +74,6 @@ def cart_change(request: WSGIRequest) -> HttpResponseRedirect | HttpResponse:
     response_data = {
         'message': 'Колличество изменено',
         'cart_items_html': cart_items_html,
-        'quantity': updated_quantity,
     }
 
     return JsonResponse(response_data)
